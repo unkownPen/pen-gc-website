@@ -8,43 +8,77 @@
     body {
       font-family: Arial, sans-serif;
       margin: 0;
-      padding: 20px;
-      background: #f5f5f5;
+      padding: 0;
+      background: #000;
+      color: white;
     }
     #security-gate {
       max-width: 400px;
-      margin: 50px auto;
+      margin: 100px auto;
       text-align: center;
-      background: white;
-      padding: 20px;
+      background: #222;
+      padding: 30px;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border: 2px solid #ff0000;
+    }
+    #security-gate h2 {
+      color: #ff0000;
+    }
+    #security-gate input, #security-gate button {
+      padding: 10px;
+      margin: 10px 0;
+      width: 80%;
+    }
+    #security-gate button {
+      background: #ff0000;
+      color: white;
+      border: none;
+      cursor: pointer;
     }
     #app {
       max-width: 800px;
-      margin: 0 auto;
-      background: white;
+      margin: 20px auto;
+      background: #111;
       padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border: 2px solid #ff0000;
       display: none;
+    }
+    header h1 {
+      color: #ff0000;
+      text-align: center;
+    }
+    .tabs {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 20px;
     }
     .tab-button {
       padding: 10px 20px;
-      background: #ddd;
+      background: #333;
+      color: white;
       border: none;
       cursor: pointer;
     }
     .tab-button.active {
-      background: #4CAF50;
-      color: white;
+      background: #ff0000;
+    }
+    .tab-pane {
+      display: none;
+      padding: 15px;
+      background: #222;
+      border-radius: 5px;
+    }
+    .tab-pane.active {
+      display: block;
     }
     #messages {
       height: 300px;
       overflow-y: auto;
-      border: 1px solid #ddd;
+      border: 1px solid #ff0000;
       padding: 10px;
       margin-bottom: 10px;
+      background: #000;
     }
     .message-input {
       display: flex;
@@ -52,17 +86,28 @@
     }
     input[type="text"] {
       flex-grow: 1;
-      padding: 8px;
+      padding: 10px;
+      background: #333;
+      color: white;
+      border: 1px solid #ff0000;
     }
     button {
-      padding: 8px 16px;
-      background: #4CAF50;
+      padding: 10px 20px;
+      background: #ff0000;
       color: white;
       border: none;
       cursor: pointer;
     }
-    button:hover {
-      background: #45a049;
+    #user-profile {
+      display: flex;
+      gap: 10px;
+      margin: 20px 0;
+    }
+    #announcements-list div {
+      margin: 10px 0;
+      padding: 10px;
+      background: #333;
+      border-left: 3px solid #ff0000;
     }
   </style>
 </head>
@@ -176,6 +221,7 @@
           db.collection("users").doc(auth.currentUser.uid).set({
             penName: penName
           }, { merge: true });
+          alert("Pen name saved!");
         }
       });
 
@@ -197,7 +243,8 @@
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
               });
               document.getElementById('message-input').value = "";
-            });
+            })
+            .catch(error => console.error("Error sending message:", error));
         }
       }
 
@@ -210,7 +257,7 @@
           snapshot.forEach(doc => {
             const message = doc.data();
             const messageElement = document.createElement('div');
-            messageElement.innerHTML = `<strong>${message.penName}:</strong> ${message.text}`;
+            messageElement.innerHTML = `<strong style="color: #ff0000">${message.penName}:</strong> ${message.text}`;
             messagesDiv.appendChild(messageElement);
           });
           messagesDiv.scrollTop = messagesDiv.scrollHeight;
