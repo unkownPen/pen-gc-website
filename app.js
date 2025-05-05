@@ -8,12 +8,16 @@ apiKey: "AIzaSyCvAEJLfyFnbwT-XHwsEW7Et-R1A11yKrs",
   appId: "1:814914537437:web:158678044c4eb2e05c5834",
   measurementId: "G-8VB5M5QN2C"
 };
+// Replace old Firebase imports with these:
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js";
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const auth = firebase.auth();
-
+const firebaseConfig = { /* your config */ };
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
 // DOM Elements
 const penNameInput = document.getElementById("pen-name-input");
 const savePenNameBtn = document.getElementById("save-pen-name");
