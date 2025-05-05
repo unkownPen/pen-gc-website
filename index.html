@@ -5,171 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pen GC</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #000;
-      color: white;
+    /* [Keep all your existing styles from previous version] */
+    .error-message {
+      color: #ff4444;
+      margin: 5px 0;
     }
-    #security-gate {
-      max-width: 400px;
-      margin: 100px auto;
-      text-align: center;
-      background: #222;
-      padding: 30px;
-      border-radius: 10px;
-      border: 2px solid #ff0000;
-    }
-    #security-gate h2 {
-      color: #ff0000;
-    }
-    #security-gate input, #security-gate button {
-      padding: 10px;
-      margin: 10px 0;
-      width: 80%;
-    }
-    #security-gate button {
-      background: #ff0000;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    #app {
-      max-width: 800px;
-      margin: 20px auto;
-      background: #111;
-      padding: 20px;
-      border-radius: 10px;
-      border: 2px solid #ff0000;
-      display: none;
-    }
-    header h1 {
-      color: #ff0000;
-      text-align: center;
-    }
-    .tabs {
-      display: flex;
-      gap: 5px;
-      margin-bottom: 20px;
-    }
-    .tab-button {
-      padding: 10px 20px;
-      background: #333;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    .tab-button.active {
-      background: #ff0000;
-    }
-    .tab-pane {
-      display: none;
-      padding: 15px;
-      background: #222;
-      border-radius: 5px;
-    }
-    .tab-pane.active {
-      display: block;
-    }
-    #messages {
-      height: 300px;
-      overflow-y: auto;
-      border: 1px solid #ff0000;
-      padding: 10px;
-      margin-bottom: 10px;
-      background: #000;
-    }
-    .message-input {
-      display: flex;
-      gap: 10px;
-    }
-    input[type="text"] {
-      flex-grow: 1;
-      padding: 10px;
-      background: #333;
-      color: white;
-      border: 1px solid #ff0000;
-    }
-    button {
-      padding: 10px 20px;
-      background: #ff0000;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    #user-profile {
-      display: flex;
-      gap: 10px;
-      margin: 20px 0;
-    }
-    #announcements-list div {
-      margin: 10px 0;
-      padding: 10px;
-      background: #333;
-      border-left: 3px solid #ff0000;
+    .success-message {
+      color: #00ff00;
+      margin: 5px 0;
     }
   </style>
 </head>
 <body>
-  <!-- Security Gate -->
-  <div id="security-gate">
-    <h2>Welcome to Pen GC</h2>
-    <p>Who is the founder?</p>
-    <input type="text" id="security-answer" placeholder="Answer">
-    <button id="security-submit">Enter</button>
-    <p id="security-error" style="color: red;"></p>
-  </div>
+  <!-- [Keep all your existing HTML structure] -->
 
-  <!-- Main App -->
-  <div id="app">
-    <header>
-      <h1>Pen GC</h1>
-      <div id="user-profile">
-        <input type="text" id="pen-name-input" placeholder="Your Pen Name">
-        <button id="save-pen-name">Save</button>
-      </div>
-    </header>
-
-    <div class="tabs">
-      <button class="tab-button active" data-tab="chat">Group Chat</button>
-      <button class="tab-button" data-tab="rules">Rules</button>
-      <button class="tab-button" data-tab="announcements">Announcements</button>
-    </div>
-
-    <div class="tab-content">
-      <!-- Group Chat -->
-      <div id="chat" class="tab-pane active">
-        <div id="messages"></div>
-        <div class="message-input">
-          <input type="text" id="message-input" placeholder="Type a message...">
-          <button id="send-message">Send</button>
-        </div>
-      </div>
-
-      <!-- Rules -->
-      <div id="rules" class="tab-pane">
-        <h2>Rules</h2>
-        <ol>
-          <li>Be respectful</li>
-          <li>No spamming</li>
-          <li>Keep it fun!</li>
-        </ol>
-      </div>
-
-      <!-- Announcements -->
-      <div id="announcements" class="tab-pane">
-        <div id="announcements-list"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
   <script>
-    // Your Firebase Config
+    // Your Firebase Config (unchanged)
     const firebaseConfig = {
       apiKey: "AIzaSyCvAEJLfyFnbwT-XHwsEW7Et-R1A11yKrs",
       authDomain: "pen-gc.firebaseapp.com",
@@ -186,108 +37,92 @@
     const auth = firebase.auth();
     const ADMIN_UID = "pSVQj3Efnzezv2SPDMSx36oS12E3";
 
-    // Security Gate
-    document.getElementById('security-submit').addEventListener('click', () => {
-      const answer = document.getElementById('security-answer').value.trim().toLowerCase();
-      if (answer === "unknown") {
-        document.getElementById('security-gate').style.display = 'none';
-        document.getElementById('app').style.display = 'block';
-        initializeApp();
-      } else {
-        document.getElementById('security-error').textContent = "Incorrect answer!";
-      }
-    });
+    // [Keep security gate code]
 
     function initializeApp() {
-      // Tab Switching
-      document.querySelectorAll('.tab-button').forEach(button => {
-        button.addEventListener('click', () => {
-          document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-          document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
-          button.classList.add('active');
-          document.getElementById(button.dataset.tab).classList.add('active');
-        });
-      });
+      // [Keep tab switching code]
 
-      // Sign in anonymously
+      // SIGN IN ANONYMOUSLY (FIXED)
       auth.signInAnonymously()
-        .then(() => console.log("Signed in anonymously"))
-        .catch(error => console.error("Sign-in error:", error));
+        .then(() => {
+          console.log("Signed in anonymously:", auth.currentUser.uid);
+          showMessage("Connected to chat!", "success");
+        })
+        .catch(error => {
+          console.error("Sign-in error:", error);
+          showMessage("Failed to connect to chat", "error");
+        });
 
-      // Save Pen Name
-      document.getElementById('save-pen-name').addEventListener('click', () => {
+      // SAVE PEN NAME (FIXED)
+      document.getElementById('save-pen-name').addEventListener('click', async () => {
         const penName = document.getElementById('pen-name-input').value.trim();
-        if (penName && auth.currentUser) {
-          db.collection("users").doc(auth.currentUser.uid).set({
+        if (!penName) return;
+        
+        try {
+          await db.collection("users").doc(auth.currentUser.uid).set({
             penName: penName
           }, { merge: true });
-          alert("Pen name saved!");
+          showMessage("Pen name saved!", "success");
+        } catch (error) {
+          console.error("Error saving pen name:", error);
+          showMessage("Failed to save name", "error");
         }
       });
 
-      // Send Message
-      document.getElementById('send-message').addEventListener('click', sendMessage);
-      document.getElementById('message-input').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendMessage();
-      });
-
-      function sendMessage() {
+      // SEND MESSAGE (FIXED)
+      async function sendMessage() {
         const messageText = document.getElementById('message-input').value.trim();
-        if (messageText && auth.currentUser) {
-          db.collection("users").doc(auth.currentUser.uid).get()
-            .then(doc => {
-              const penName = doc.exists && doc.data().penName ? doc.data().penName : "Anonymous";
-              db.collection("messages").add({
-                text: messageText,
-                penName: penName,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-              });
-              document.getElementById('message-input').value = "";
-            })
-            .catch(error => console.error("Error sending message:", error));
+        if (!messageText || !auth.currentUser) return;
+
+        try {
+          const userDoc = await db.collection("users").doc(auth.currentUser.uid).get();
+          const penName = userDoc.exists && userDoc.data().penName 
+            ? userDoc.data().penName 
+            : "Anonymous";
+          
+          await db.collection("messages").add({
+            text: messageText,
+            penName: penName,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          document.getElementById('message-input').value = "";
+        } catch (error) {
+          console.error("Error sending message:", error);
+          showMessage("Failed to send message", "error");
         }
       }
 
-      // Load Messages
+      // LOAD MESSAGES (FIXED)
       db.collection("messages")
         .orderBy("timestamp", "asc")
-        .onSnapshot(snapshot => {
-          const messagesDiv = document.getElementById('messages');
-          messagesDiv.innerHTML = "";
-          snapshot.forEach(doc => {
-            const message = doc.data();
-            const messageElement = document.createElement('div');
-            messageElement.innerHTML = `<strong style="color: #ff0000">${message.penName}:</strong> ${message.text}`;
-            messagesDiv.appendChild(messageElement);
-          });
-          messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        });
-
-      // Load Announcements
-      db.collection("announcements")
-        .orderBy("timestamp", "desc")
-        .onSnapshot(snapshot => {
-          const announcementsDiv = document.getElementById('announcements-list');
-          announcementsDiv.innerHTML = "";
-          snapshot.forEach(doc => {
-            const announcement = doc.data();
-            const announcementElement = document.createElement('div');
-            announcementElement.innerHTML = `<strong>📢 ${announcement.title}</strong><br>${announcement.content}`;
-            announcementsDiv.appendChild(announcementElement);
-          });
-        });
-
-      // Load Pen Name
-      auth.onAuthStateChanged(user => {
-        if (user) {
-          db.collection("users").doc(user.uid).get()
-            .then(doc => {
-              if (doc.exists && doc.data().penName) {
-                document.getElementById('pen-name-input').value = doc.data().penName;
-              }
+        .onSnapshot(
+          snapshot => {
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML = "";
+            snapshot.forEach(doc => {
+              const message = doc.data();
+              const messageElement = document.createElement('div');
+              messageElement.innerHTML = `<strong style="color: #ff0000">${message.penName}:</strong> ${message.text}`;
+              messagesDiv.appendChild(messageElement);
             });
-        }
-      });
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+          },
+          error => {
+            console.error("Message load error:", error);
+            showMessage("Failed to load messages", "error");
+          }
+        );
+
+      // [Keep other existing code]
+    }
+
+    // NEW: Helper function to show status messages
+    function showMessage(text, type) {
+      const msg = document.createElement('div');
+      msg.className = `${type}-message`;
+      msg.textContent = text;
+      document.body.appendChild(msg);
+      setTimeout(() => msg.remove(), 3000);
     }
   </script>
 </body>
