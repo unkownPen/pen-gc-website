@@ -4,11 +4,80 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pen GC</title>
-  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    #security-gate {
+      max-width: 400px;
+      margin: 50px auto;
+      text-align: center;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    #app {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      display: none;
+    }
+    .tab-button {
+      padding: 10px 20px;
+      background: #ddd;
+      border: none;
+      cursor: pointer;
+    }
+    .tab-button.active {
+      background: #4CAF50;
+      color: white;
+    }
+    #messages {
+      height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .message-input {
+      display: flex;
+      gap: 10px;
+    }
+    input[type="text"] {
+      flex-grow: 1;
+      padding: 8px;
+    }
+    button {
+      padding: 8px 16px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #45a049;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <!-- Header -->
+  <!-- Security Gate -->
+  <div id="security-gate">
+    <h2>Welcome to Pen GC</h2>
+    <p>Who is the founder?</p>
+    <input type="text" id="security-answer" placeholder="Answer">
+    <button id="security-submit">Enter</button>
+    <p id="security-error" style="color: red;"></p>
+  </div>
+
+  <!-- Main App -->
+  <div id="app">
     <header>
       <h1>Pen GC</h1>
       <div id="user-profile">
@@ -17,16 +86,12 @@
       </div>
     </header>
 
-    <!-- Tabs -->
     <div class="tabs">
       <button class="tab-button active" data-tab="chat">Group Chat</button>
       <button class="tab-button" data-tab="rules">Rules</button>
       <button class="tab-button" data-tab="announcements">Announcements</button>
-      <button class="tab-button" data-tab="polls">Polls</button>
-      <button class="tab-button" data-tab="suggestions">Suggestions</button>
     </div>
 
-    <!-- Tab Content -->
     <div class="tab-content">
       <!-- Group Chat -->
       <div id="chat" class="tab-pane active">
@@ -39,49 +104,144 @@
 
       <!-- Rules -->
       <div id="rules" class="tab-pane">
-        <h2>Group Rules</h2>
+        <h2>Rules</h2>
         <ol>
-          <li>Be respectful.</li>
-          <li>No spamming.</li>
+          <li>Be respectful</li>
+          <li>No spamming</li>
           <li>Keep it fun!</li>
         </ol>
       </div>
 
-      <!-- Announcements (Admin Only) -->
+      <!-- Announcements -->
       <div id="announcements" class="tab-pane">
         <div id="announcements-list"></div>
-        <div id="admin-announcement-form" style="display: none;">
-          <input type="text" id="announcement-input" placeholder="New announcement">
-          <button id="post-announcement">Post</button>
-        </div>
-      </div>
-
-      <!-- Polls (Admin Only) -->
-      <div id="polls" class="tab-pane">
-        <div id="polls-list"></div>
-        <div id="admin-poll-form" style="display: none;">
-          <input type="text" id="poll-question" placeholder="Poll question">
-          <input type="text" id="poll-option1" placeholder="Option 1">
-          <input type="text" id="poll-option2" placeholder="Option 2">
-          <button id="create-poll">Create Poll</button>
-        </div>
-      </div>
-
-      <!-- Suggestions -->
-      <div id="suggestions" class="tab-pane">
-        <div id="suggestions-list"></div>
-        <div class="suggestion-input">
-          <input type="text" id="suggestion-input" placeholder="Your suggestion...">
-          <button id="submit-suggestion">Submit</button>
-        </div>
       </div>
     </div>
   </div>
 
-  <!-- Firebase & App JS -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js"></script>
-  <script src="app.js"></script>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+  <script>
+    // Your Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCvAEJLfyFnbwT-XHwsEW7Et-R1A11yKrs",
+      authDomain: "pen-gc.firebaseapp.com",
+      projectId: "pen-gc",
+      storageBucket: "pen-gc.firebasestorage.app",
+      messagingSenderId: "814914537437",
+      appId: "1:814914537437:web:158678044c4eb2e05c5834",
+      measurementId: "G-8VB5M5QN2C"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+    const ADMIN_UID = "pSVQj3Efnzezv2SPDMSx36oS12E3";
+
+    // Security Gate
+    document.getElementById('security-submit').addEventListener('click', () => {
+      const answer = document.getElementById('security-answer').value.trim().toLowerCase();
+      if (answer === "unknown") {
+        document.getElementById('security-gate').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+        initializeApp();
+      } else {
+        document.getElementById('security-error').textContent = "Incorrect answer!";
+      }
+    });
+
+    function initializeApp() {
+      // Tab Switching
+      document.querySelectorAll('.tab-button').forEach(button => {
+        button.addEventListener('click', () => {
+          document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+          document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+          button.classList.add('active');
+          document.getElementById(button.dataset.tab).classList.add('active');
+        });
+      });
+
+      // Sign in anonymously
+      auth.signInAnonymously()
+        .then(() => console.log("Signed in anonymously"))
+        .catch(error => console.error("Sign-in error:", error));
+
+      // Save Pen Name
+      document.getElementById('save-pen-name').addEventListener('click', () => {
+        const penName = document.getElementById('pen-name-input').value.trim();
+        if (penName && auth.currentUser) {
+          db.collection("users").doc(auth.currentUser.uid).set({
+            penName: penName
+          }, { merge: true });
+        }
+      });
+
+      // Send Message
+      document.getElementById('send-message').addEventListener('click', sendMessage);
+      document.getElementById('message-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendMessage();
+      });
+
+      function sendMessage() {
+        const messageText = document.getElementById('message-input').value.trim();
+        if (messageText && auth.currentUser) {
+          db.collection("users").doc(auth.currentUser.uid).get()
+            .then(doc => {
+              const penName = doc.exists && doc.data().penName ? doc.data().penName : "Anonymous";
+              db.collection("messages").add({
+                text: messageText,
+                penName: penName,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+              });
+              document.getElementById('message-input').value = "";
+            });
+        }
+      }
+
+      // Load Messages
+      db.collection("messages")
+        .orderBy("timestamp", "asc")
+        .onSnapshot(snapshot => {
+          const messagesDiv = document.getElementById('messages');
+          messagesDiv.innerHTML = "";
+          snapshot.forEach(doc => {
+            const message = doc.data();
+            const messageElement = document.createElement('div');
+            messageElement.innerHTML = `<strong>${message.penName}:</strong> ${message.text}`;
+            messagesDiv.appendChild(messageElement);
+          });
+          messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        });
+
+      // Load Announcements
+      db.collection("announcements")
+        .orderBy("timestamp", "desc")
+        .onSnapshot(snapshot => {
+          const announcementsDiv = document.getElementById('announcements-list');
+          announcementsDiv.innerHTML = "";
+          snapshot.forEach(doc => {
+            const announcement = doc.data();
+            const announcementElement = document.createElement('div');
+            announcementElement.innerHTML = `<strong>📢 ${announcement.title}</strong><br>${announcement.content}`;
+            announcementsDiv.appendChild(announcementElement);
+          });
+        });
+
+      // Load Pen Name
+      auth.onAuthStateChanged(user => {
+        if (user) {
+          db.collection("users").doc(user.uid).get()
+            .then(doc => {
+              if (doc.exists && doc.data().penName) {
+                document.getElementById('pen-name-input').value = doc.data().penName;
+              }
+            });
+        }
+      });
+    }
+  </script>
 </body>
 </html>
