@@ -1,1 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pen GC</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <h1>Pen GC</h1>
+      <div id="user-profile">
+        <input type="text" id="pen-name-input" placeholder="Your Pen Name">
+        <button id="save-pen-name">Save</button>
+      </div>
+    </header>
 
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-button active" data-tab="chat">Group Chat</button>
+      <button class="tab-button" data-tab="rules">Rules</button>
+      <button class="tab-button" data-tab="announcements">Announcements</button>
+      <button class="tab-button" data-tab="polls">Polls</button>
+      <button class="tab-button" data-tab="suggestions">Suggestions</button>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+      <!-- Group Chat -->
+      <div id="chat" class="tab-pane active">
+        <div id="messages"></div>
+        <div class="message-input">
+          <input type="text" id="message-input" placeholder="Type a message...">
+          <button id="send-message">Send</button>
+        </div>
+      </div>
+
+      <!-- Rules -->
+      <div id="rules" class="tab-pane">
+        <h2>Group Rules</h2>
+        <ol>
+          <li>Be respectful.</li>
+          <li>No spamming.</li>
+          <li>Keep it fun!</li>
+        </ol>
+      </div>
+
+      <!-- Announcements (Admin Only) -->
+      <div id="announcements" class="tab-pane">
+        <div id="announcements-list"></div>
+        <div id="admin-announcement-form" style="display: none;">
+          <input type="text" id="announcement-input" placeholder="New announcement">
+          <button id="post-announcement">Post</button>
+        </div>
+      </div>
+
+      <!-- Polls (Admin Only) -->
+      <div id="polls" class="tab-pane">
+        <div id="polls-list"></div>
+        <div id="admin-poll-form" style="display: none;">
+          <input type="text" id="poll-question" placeholder="Poll question">
+          <input type="text" id="poll-option1" placeholder="Option 1">
+          <input type="text" id="poll-option2" placeholder="Option 2">
+          <button id="create-poll">Create Poll</button>
+        </div>
+      </div>
+
+      <!-- Suggestions -->
+      <div id="suggestions" class="tab-pane">
+        <div id="suggestions-list"></div>
+        <div class="suggestion-input">
+          <input type="text" id="suggestion-input" placeholder="Your suggestion...">
+          <button id="submit-suggestion">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase & App JS -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
